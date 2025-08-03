@@ -1,0 +1,33 @@
+pipeline {
+    agent any
+    parameters {
+        string(name: 'S3_BUCKET_NAME', description: 'Pass the name of the S3 Bucket you want to create')
+        choice(name: 'REGION', choices: ['us-east-1', 'us-east-2'], description: 'Select which region to create the bucket')
+    }
+    stages {
+        stage('Create S3 Bucket') {
+            steps {
+                script {
+               sh "aws s3api create-bucket --bucket ${params.S3_BUCKET_NAME} --region ${params.REGION}"
+            }
+        }
+    }
+        stage('List S3 Buckets') {
+            steps {
+                script {
+               sh "aws s3 ls"
+            }
+        }
+        }
+        stage('Delete S3 Bucket') {
+            steps {
+                script {
+                sleep 60
+                sh "aws s3api delete-bucket --bucket ${params.S3_BUCKET_NAME} --region ${params.REGION}"
+                echo "Bucket ${params.S3_BUCKET_NAME} deleted successfully." 
+            }
+            }
+        }
+    }
+
+}
