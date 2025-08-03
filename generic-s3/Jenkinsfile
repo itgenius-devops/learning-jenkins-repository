@@ -8,7 +8,7 @@ pipeline {
         stage('Create S3 Bucket') {
             steps {
                 script {
-               sh "aws s3api create-bucket --bucket ${params.S3_BUCKET_NAME} --region ${params.REGION}"
+               sh 'aws s3api create-bucket --bucket "${params.S3_BUCKET_NAME}" --region "${params.REGION}"'
             }
         }
     }
