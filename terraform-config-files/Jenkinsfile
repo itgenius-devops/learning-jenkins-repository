@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+    parameters {
+        choice(name: 'TERRAFORM_ACTION', choices: ['','apply', 'destroy'], description: 'Pass the action you want to perform with Terraform')
+    }
+    stages {
+        stage('Clone Repository') {
+            steps {
+                script {
+               git branch: 'main', credentialsId: 'github_credentials', url: 'https://github.com/itgenius-devops/learning-jenkins-repository.git'
+            }
+        }
+    }
+        stage('Terraform Init') {
+            steps {
+                script {
+                    dir('terraform-config-files') {
+                       sh "terraform init"
+                }
+            }
+        }
+        }
+        stage('Terraform plan') {
+            steps {
+                script {
+                    dir('terraform-config-files') {
+                       sh "terraform plan"
+                }
+            }
+        }
+        }
+
+        stage('Terraform apply') {
+            steps {
+                script {
+                    dir('terraform-config-files') {
+                       sh "terraform ${params.TERRAFORM_ACTION} -auto-approve"
+                }
+            }
+        }
+        }
+    }
+
+}
